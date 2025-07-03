@@ -3,6 +3,11 @@
     max-height: 80px;
 }
 
+/* Cor laranja para destaque */
+.text-orange {
+    color: #ff6b35;
+}
+
 /* Esconde os campos específicos por padrão */
 .d-none {
     display: none !important;
