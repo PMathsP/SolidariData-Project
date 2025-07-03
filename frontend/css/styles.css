@@ -1,0 +1,14 @@
+/* Estilo para a logo no header */
+.logo {
+    max-height: 80px;
+}
+
+/* Esconde os campos específicos por padrão */
+.d-none {
+    display: none !important;
+}
+
+/* Mostra os campos quando necessário */
+.d-block {
+    display: block !important;
+}
