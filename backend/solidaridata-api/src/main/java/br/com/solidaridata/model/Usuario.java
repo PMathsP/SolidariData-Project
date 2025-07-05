@@ -1,18 +1,19 @@
 package br.com.solidaridata.model;
 
-import java.time.LocalDate;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
 
 @Data
 @Entity
 @Table(name = "usuario")
-public class Usuario {
+public class Usuario implements UserDetails { // Implementa a interface UserDetails
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,4 +43,40 @@ public class Usuario {
 
     @Column(name = "id_email")
     private Integer idEmail;
+
+
+    // ==========================================================
+    // MÉTODOS OBRIGATÓRIOS DA INTERFACE UserDetails
+    // ==========================================================
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Define o "papel" ou "permissão" do usuário.
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+
+    @Override
+    public String getPassword() {
+        // Informa ao Spring Security qual campo contém a senha.
+        return this.senhaHash;
+    }
+
+    @Override
+    public String getUsername() {
+        // Informa ao Spring Security qual campo será usado como "login". Usaremos o CPF.
+        return this.cpfUsuario;
+    }
+
+    // Os métodos abaixo controlam status da conta. Deixaremos como 'true' para simplificar.
+    @Override
+    public boolean isAccountNonExpired() { return true; }
+
+    @Override
+    public boolean isAccountNonLocked() { return true; }
+
+    @Override
+    public boolean isCredentialsNonExpired() { return true; }
+
+    @Override
+    public boolean isEnabled() { return true; }
 }
