@@ -1,6 +1,6 @@
 -- ATUALIZAÇÃO FINAL E CORRETA PARA A SENHA 'admin'
 UPDATE usuario 
-SET senha_hash = '$2a$10$8.w.G.5oNcV7G0s3J1e0Z.e2u8d6f9j0k1l2m3n4o5p6q7r8s9t0u' 
+SET senha_hash = '$2a$10$zR5tN068pfx6rbg.OuI2l.Gs0luCrranCV8Rj0SmqQHGsfwcT4Xmy' 
 WHERE cpf_usuario = '11111111111';
 
 PRINT 'Senha do administrador (CPF 11111111111) atualizada com o hash correto e definitivo.';

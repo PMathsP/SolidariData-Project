@@ -8,28 +8,95 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">Dashboard SolidariData</a>
-            <button id="logout-btn" class="btn btn-outline-light">Sair</button>
-        </div>
-    </nav>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="#">Dashboard SolidariData</a>
+                <button id="logout-btn" class="btn btn-outline-light">Sair</button>
+            </div>
+        </nav>
+    </header>
 
     <main class="container my-5">
-        <h2>Gerenciamento de Beneficiários</h2>
-        <table class="table table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>CPF</th>
-                    <th>Data de Nascimento</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="tabela-beneficiarios">
-                </tbody>
-        </table>
+        
+        <section id="secao-usuarios" class="mb-5">
+            <h2>Gerenciamento de Usuários</h2>
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>CPF</th>
+                        <th>Tipo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-usuarios"></tbody>
+            </table>
+        </section>
+
+        <section id="secao-instituicoes" class="mb-5">
+            <h2>Gerenciamento de Instituições</h2>
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome da Instituição</th>
+                        <th>CNPJ</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-instituicoes"></tbody>
+            </table>
+        </section>
+
+        <section id="secao-beneficiarios" class="mb-5">
+            <h2>Gerenciamento de Beneficiários</h2>
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>CPF</th>
+                        <th>Nascimento</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-beneficiarios"></tbody>
+            </table>
+        </section>
+        
+        <section id="secao-servicos" class="mb-5">
+            <h2>Gerenciamento de Serviços</h2>
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Descrição</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-servicos"></tbody>
+            </table>
+        </section>
+        
+        <section id="secao-atendimentos" class="mb-5">
+            <h2>Gerenciamento de Atendimentos</h2>
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Data</th>
+                        <th>Urgência</th>
+                        <th>ID Instituição</th>
+                        <th>ID Beneficiário</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-atendimentos"></tbody>
+            </table>
+        </section>
+
     </main>
 
     <script src="js/dashboard.js"></script>
