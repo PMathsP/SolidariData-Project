@@ -6,10 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/instituicoes")
@@ -26,8 +24,8 @@ public class InstituicaoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Instituicao> getInstituicaoById(@PathVariable Integer id) {
-        Optional<Instituicao> instituicao = instituicaoService.buscarInstituicaoPorId(id);
-        return instituicao.map(ResponseEntity::ok)
+        return instituicaoService.buscarInstituicaoPorId(id)
+                .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -53,28 +51,5 @@ public class InstituicaoController {
         } else {
             return ResponseEntity.notFound().build();
         }
-    }
-
-    // NOVO ENDPOINT: Associa um serviço a uma instituição
-    // Ex: POST /api/instituicoes/1/servicos/2
-    @PostMapping("/{idInstituicao}/servicos/{idServico}")
-    public ResponseEntity<Void> adicionarServicoAInstituicao(
-            @PathVariable Integer idInstituicao,
-            @PathVariable Integer idServico) {
-        instituicaoService.adicionarServico(idInstituicao, idServico);
-        // Retorna 201 Created para indicar que a associação foi criada com sucesso
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    // NOVO ENDPOINT: Desassocia um serviço de uma instituição
-    // Ex: DELETE /api/instituicoes/1/servicos/2
-    @DeleteMapping("/{idInstituicao}/servicos/{idServico}")
-    public ResponseEntity<Void> removerServicoDaInstituicao(
-            @PathVariable Integer idInstituicao,
-            @PathVariable Integer idServico) {
-        instituicaoService.removerServico(idInstituicao, idServico);
-        // Retorna 204 No Content para indicar que a associação foi removida
-        return ResponseEntity.noContent().build();
-
     }
 }

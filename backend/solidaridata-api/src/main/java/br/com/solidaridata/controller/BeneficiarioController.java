@@ -6,14 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/beneficiarios")
-@CrossOrigin(originPatterns = "*", allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:5500", "http://127.0.0.1:5500", "http://localhost:3000", "http://127.0.0.1:3000"})
 public class BeneficiarioController {
 
     @Autowired
@@ -26,8 +24,8 @@ public class BeneficiarioController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Beneficiario> getBeneficiarioById(@PathVariable Integer id) {
-        Optional<Beneficiario> beneficiario = beneficiarioService.buscarBeneficiarioPorId(id);
-        return beneficiario.map(ResponseEntity::ok)
+        return beneficiarioService.buscarBeneficiarioPorId(id)
+                .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
