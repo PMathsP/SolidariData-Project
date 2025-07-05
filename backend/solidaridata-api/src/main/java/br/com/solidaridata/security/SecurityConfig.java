@@ -30,17 +30,56 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         // Permite a requisição de login
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         // Permite requisições OPTIONS, essenciais para o CORS preflight
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // Permite acesso aos endpoints de cadastro
+                        .requestMatchers(HttpMethod.POST, "/api/beneficiarios").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/instituicoes").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/beneficiarios").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/beneficiarios/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/instituicoes").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/instituicoes/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/usuarios").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/usuarios/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/servicos").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/servicos/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/atendimentos").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/atendimentos/**").permitAll()
+                        // Permite operações de edição e exclusão (temporário para desenvolvimento)
+                        .requestMatchers(HttpMethod.DELETE, "/api/usuarios/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/beneficiarios/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/instituicoes/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/servicos/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/atendimentos/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/beneficiarios/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/instituicoes/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/servicos/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/atendimentos/**").permitAll()
                         // Protege todas as outras requisições
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     // O resto dos beans permanece o mesmo

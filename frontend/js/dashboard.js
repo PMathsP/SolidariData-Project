@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
-                if (response.status === 204) {
+                if (response.status === 204 || response.status === 200) {
                     alert('Item excluído com sucesso!');
                     carregarDados(entidade); // Recarrega a tabela específica
                 } else {
@@ -97,6 +97,163 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // FUNÇÃO para editar um item
+    async function editarItem(entidade, id) {
+        try {
+            // Busca os dados atuais do item
+            const response = await fetch(`${apiEndpoints[entidade]}/${id}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            if (!response.ok) throw new Error('Falha ao buscar dados do item');
+            
+            const item = await response.json();
+            
+            // Gera formulário baseado na entidade
+            let formHTML = '';
+            switch (entidade) {
+                case 'usuarios':
+                    formHTML = `
+                        <div class="mb-3">
+                            <label class="form-label">Nome:</label>
+                            <input type="text" class="form-control" id="edit-nome" value="${item.nomeUsuario || ''}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">CPF:</label>
+                            <input type="text" class="form-control" id="edit-cpf" value="${item.cpfUsuario || ''}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tipo:</label>
+                            <select class="form-control" id="edit-tipo">
+                                <option value="1" ${item.tipoUsuario === 1 ? 'selected' : ''}>Admin</option>
+                                <option value="2" ${item.tipoUsuario === 2 ? 'selected' : ''}>Operador</option>
+                            </select>
+                        </div>`;
+                    break;
+                case 'beneficiarios':
+                    formHTML = `
+                        <div class="mb-3">
+                            <label class="form-label">Nome:</label>
+                            <input type="text" class="form-control" id="edit-nome" value="${item.nome || ''}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">CPF:</label>
+                            <input type="text" class="form-control" id="edit-cpf" value="${item.cpf || ''}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Data de Nascimento:</label>
+                            <input type="date" class="form-control" id="edit-data" value="${item.dataNascimento || ''}">
+                        </div>`;
+                    break;
+                case 'instituicoes':
+                    formHTML = `
+                        <div class="mb-3">
+                            <label class="form-label">Nome da Instituição:</label>
+                            <input type="text" class="form-control" id="edit-nome" value="${item.nomeInstituicao || ''}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">CNPJ:</label>
+                            <input type="text" class="form-control" id="edit-cnpj" value="${item.cnpj || ''}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Razão Social:</label>
+                            <input type="text" class="form-control" id="edit-razao" value="${item.razaoSocial || ''}">
+                        </div>`;
+                    break;
+            }
+            
+            // Cria modal para edição
+            const modalHTML = `
+                <div class="modal fade" id="editModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Editar ${entidade}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                ${formHTML}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-primary" id="salvar-edicao">Salvar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            
+            // Remove modal anterior se existir
+            const modalExistente = document.getElementById('editModal');
+            if (modalExistente) modalExistente.remove();
+            
+            // Adiciona modal ao DOM
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Abre modal
+            const modal = new bootstrap.Modal(document.getElementById('editModal'));
+            modal.show();
+            
+            // Configura botão salvar
+            document.getElementById('salvar-edicao').onclick = () => salvarEdicao(entidade, id, modal);
+            
+        } catch (error) {
+            console.error(`Erro ao editar ${entidade}:`, error);
+            alert('Erro ao carregar dados para edição');
+        }
+    }
+
+    // FUNÇÃO para salvar edição
+    async function salvarEdicao(entidade, id, modal) {
+        try {
+            let dadosAtualizados = {};
+            
+            switch (entidade) {
+                case 'usuarios':
+                    dadosAtualizados = {
+                        nomeUsuario: document.getElementById('edit-nome').value,
+                        cpfUsuario: document.getElementById('edit-cpf').value,
+                        tipoUsuario: parseInt(document.getElementById('edit-tipo').value)
+                    };
+                    break;
+                case 'beneficiarios':
+                    dadosAtualizados = {
+                        nome: document.getElementById('edit-nome').value,
+                        cpf: document.getElementById('edit-cpf').value,
+                        dataNascimento: document.getElementById('edit-data').value
+                    };
+                    break;
+                case 'instituicoes':
+                    dadosAtualizados = {
+                        nomeInstituicao: document.getElementById('edit-nome').value,
+                        cnpj: document.getElementById('edit-cnpj').value,
+                        razaoSocial: document.getElementById('edit-razao').value
+                    };
+                    break;
+            }
+            
+            const response = await fetch(`${apiEndpoints[entidade]}/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(dadosAtualizados)
+            });
+            
+            if (response.ok) {
+                alert('Item atualizado com sucesso!');
+                modal.hide();
+                carregarDados(entidade); // Recarrega a tabela
+            } else {
+                throw new Error('Falha ao atualizar item');
+            }
+            
+        } catch (error) {
+            console.error(`Erro ao salvar edição:`, error);
+            alert('Erro ao salvar alterações');
+        }
+    }
+
     // Event listener único para todas as tabelas
     document.querySelector('main').addEventListener('click', function(event) {
         const target = event.target;
@@ -106,7 +263,9 @@ document.addEventListener('DOMContentLoaded', () => {
             deletarItem(entidade, id);
         }
         if (target.classList.contains('btn-editar')) {
-            alert('A funcionalidade de "Editar" pode ser implementada aqui, abrindo um formulário em um pop-up (modal) e fazendo uma requisição PUT.');
+            const id = target.dataset.id;
+            const entidade = target.dataset.entidade;
+            editarItem(entidade, id);
         }
     });
 
